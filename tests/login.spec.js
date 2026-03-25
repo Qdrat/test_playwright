@@ -25,5 +25,29 @@ test.describe('Авторизация на Sauce Demo', () => {
     await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
   });
 
+    //тест-кейс с неуспешным входом
+  test('Неуспешный вход пользователя в систему', async ({ page }) => {
+    // 1. Переходим на страницу
+    await page.goto('https://www.saucedemo.com/');
 
+    // 2. Вводим логин
+    // Используем селектор по id
+    await page.locator('#user-name').fill('locked_out_user');
+
+    // 3. Вводим пароль
+    // Используем селектор по placeholder
+    await page.locator('[placeholder="Password"]').fill('secret_sauce');
+
+    // 4. Нажимаем кнопку входа
+    // Используем селектор по data-test атрибуту
+    await page.locator('[data-test="login-button"]').click();
+
+    // 5. Проверяем, стал ли локатор видимым
+    await expect(page.locator('[data-test="error"]')).toBeVisible();
+
+    // 5. Проверяем, что появилось сообщение об ошибке
+    await expect(page.locator('[data-test="error"]'))
+    .toHaveText('Epic sadface: Sorry, this user has been locked out.');
+  });
+  
 });
